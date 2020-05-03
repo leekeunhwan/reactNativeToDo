@@ -1,113 +1,106 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-import React from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
   StatusBar,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const App = () => {
+  // useState [변수명, set변수명] = useState(기본값);
+  const [list, setList] = useState([]);
+  const [todo, setTodo] = useState('');
 
-const App: () => React$Node = () => {
+  const handleChangeTodo = useCallback((todo) => {
+    setTodo(todo);
+  }, []);
+
+  const addTodoInList = useCallback(() => {
+    setList([
+      ...list,
+      {
+        todo,
+        isDone: false,
+        isDelete: false,
+      },
+    ]);
+  }, [list, todo]);
+
+  // useEffect(() => {
+  //   console.log('list', JSON.stringify(list));
+  // }, [list]);
+
   return (
     <>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="dark-content" hidden={true} />
       <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
+        {/* 투두리스트 제목 */}
+        <View style={styles.titleLayout}>
+          <Text style={styles.titleText}>To-Do-List</Text>
+        </View>
+        {/* 텍스트 인풋 및 버튼 */}
+        <View style={styles.inputLayout}>
+          <TextInput
+            style={styles.inputStyle}
+            onChangeText={handleChangeTodo}
+          />
+          <TouchableOpacity style={styles.buttonView} onPress={addTodoInList}>
+            <View style={styles.buttonTextLayout}>
+              <Text>저장</Text>
             </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
+          </TouchableOpacity>
+        </View>
+        {/* 투두리스트 */}
+        <View>
+          <FlatList
+            data={list}
+            renderItem={({item}) => <Text>{item.todo}</Text>}
+          />
+        </View>
       </SafeAreaView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  titleLayout: {
+    paddingVertical: 20,
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
+  titleText: {
     fontSize: 24,
     fontWeight: '600',
-    color: Colors.black,
+    textAlign: 'center',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
+  inputLayout: {
+    paddingHorizontal: 20,
+    flex: 1,
+    flexDirection: 'row',
+    height: 50,
   },
-  highlight: {
-    fontWeight: '700',
+  inputStyle: {
+    flex: 1,
+    height: 50,
+    borderColor: '#404040',
+    borderWidth: 1,
+    paddingHorizontal: 20,
+    marginRight: 10,
+    lineHeight: 0,
+    fontSize: 17,
   },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+  buttonView: {
+    width: 50,
+    height: 50,
+    borderColor: '#404040',
+    borderWidth: 1,
+  },
+  buttonTextLayout: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
